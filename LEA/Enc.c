@@ -2,28 +2,10 @@
 #include "Enc.h"
 #include "operation.h"
 
-// 왼쪽으로 n비트 순환이동
-word ROL(word text,int n)
-{
-	if (n == 0)
-		return text;
-	return (text >> (32-n)) ^ (text << n);
-}
 
-//오른쪽으로 5비트 순환이동
-word ROR5(word text)
-{
-	return (text >> 5) ^ ((text & 0x1f) << 27);
-}
-
-//오른쪽으로 3비트 순환이동
-word ROR3(word text)
-{
-	return (text >> 3) ^ ((text & 0x7) << 29);
-}
 
 //라운드함수
-void Round(word text[4],word Rk[6])
+void Enc_Round(word text[4],word Rk[6])
 {
 	word tmp = text[0];
 
@@ -33,7 +15,7 @@ void Round(word text[4],word Rk[6])
 	text[3] = tmp;
 }
 
-void KeySchedule(byte Key[16], word Rk[][6])
+void Enc_KeySchedule(byte Key[16], word Rk[][6])
 {
 	word tmp[4] = { 0, };
 	BtW(Key, tmp); 
@@ -58,9 +40,9 @@ void Encryption(byte Plain[16], byte Cipher[16], byte Key[16])
 	word RK[Nr][6];
 	word text[4]={0,};
 
-	KeySchedule(Key, RK);
+	Enc_KeySchedule(Key, RK);
 	BtW(Plain, text); 
 	for (int i = 0; i < Nr; i++)
-		Round(text, RK[i]);
+		Enc_Round(text, RK[i]);
 	WtB(text, Cipher);
 }

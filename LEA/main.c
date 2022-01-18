@@ -1,6 +1,7 @@
 #include "type.h"
 #include "operation.h"
 #include "Enc.h"
+#include "Dec.h"
 
 int main()
 {
@@ -17,11 +18,24 @@ int main()
 	{
 		printf("%02x ", Key[i]);
 	}
+	printf("\n----------------------------Encryption----------------------------");
 	printf("\nCipher: ");
 	Encryption(Plain, Cipher, Key);
 	for (int i = 0; i < 16; i++)
 	{
 		printf("%02x ", Cipher[i]);
+	}
+	printf("\nKey: ");
+	for (int i = 0; i < 16; i++)
+	{
+		printf("%02x ", Key[i]);
+	}
+	printf("\n----------------------------Decryption----------------------------");
+	printf("\nPlain: ");
+	Decryption(Cipher, Plain, Key);
+	for (int i = 0; i < 16; i++)
+	{
+		printf("%02x ", Plain[i]);
 	}
 
 	return 0;

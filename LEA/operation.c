@@ -1,5 +1,32 @@
 #include "operation.h"
 
+// 왼쪽으로 n비트 순환이동
+word ROL(word text, int n)
+{
+	if (n == 0)
+		return text;
+	return (text >> (32 - n)) ^ (text << n);
+}
+
+//오른쪽으로 5비트 순환이동
+word ROR5(word text)
+{
+	return (text >> 5) ^ ((text & 0x1f) << 27);
+}
+
+//오른쪽으로 3비트 순환이동
+word ROR3(word text)
+{
+	return (text >> 3) ^ ((text & 0x7) << 29);
+}
+
+//오른쪽으로 3비트 순환이동
+word ROR9(word text)
+{
+	return (text >> 9) ^ ((text & 0x1ff) << 23);
+}
+
+
 //바이트 배열과 값이 같은 워드배열 생성
 void BtW(byte plain[Nb],word text[Nb/4])
 {
