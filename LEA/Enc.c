@@ -5,15 +5,104 @@
 
 
 //라운드함수
-void Enc_Round(word text[4],word Rk[6])
+#if 0
+void Enc_Round(word text[4], word Rk[6])
+{
+	word tmp = text[0];
+	byte tmp2[4] = { 0, };
+	byte tmp3[4] = { 0, };
+	word tmp4 = 0;
+	byte carry = 0;
+	text[1] ^= Rk[1];
+	text[0] ^= Rk[0];
+	
+	for (int i = 0; i < 4; i++)
+		tmp2[i] = (text[1] >> (8 * (i % 4))) & 0xff;
+	
+	for (int i = 0; i < 4; i++)
+		tmp3[i] = (text[0] >> (8 * (i % 4))) & 0xff;
+
+	for (int i = 0; i < 4; i++)
+	{
+		tmp2[i] = tmp3[i]+tmp2[i]+carry;
+		if (tmp2[i] <= tmp3[i])
+			carry = 1;
+		else
+			carry = 0;
+	}
+
+	for (int i = 0; i < 4; i++)
+		tmp4 += (word)tmp2[i] << (8 * (i % 4));
+	text[1] ^= Rk[1];
+	text[0] ^= Rk[0];
+	text[0] = ROL(tmp4, 9);
+
+
+	text[2] ^= Rk[3];
+	text[1] ^= Rk[2];
+	for (int i = 0; i < 4; i++)
+		tmp2[i] = (text[2] >> (8 * (i % 4))) & 0xff;
+	for (int i = 0; i < 4; i++)
+		tmp3[i] = (text[1] >> (8 * (i % 4))) & 0xff;
+
+	carry = 0;
+	tmp4 = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		tmp2[i] = tmp3[i] + tmp2[i] + carry;
+		if (tmp2[i] <= tmp3[i])
+			carry = 1;
+		else
+			carry = 0;
+	}
+
+	for (int i = 0; i < 4; i++)
+		tmp4 += (word)tmp2[i] << (8 * (i % 4));
+
+	text[2] ^= Rk[3];
+	text[1] ^= Rk[2];
+	text[1] = ROR5(tmp4);
+
+	
+	text[3] ^= Rk[5];
+	text[2] ^= Rk[4];
+	for (int i = 0; i < 4; i++)
+		tmp2[i] = (text[3] >> (8 * (i % 4))) & 0xff;
+	for (int i = 0; i < 4; i++)
+		tmp3[i] = (text[2] >> (8 * (i % 4))) & 0xff;
+
+	carry = 0;
+	tmp4 = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		tmp2[i] = tmp3[i] + tmp2[i] + carry;
+		if (tmp2[i] <= tmp3[i])
+			carry = 1;
+		else
+			carry = 0;
+	}
+
+	for (int i = 0; i < 4; i++)
+		tmp4 += (word)tmp2[i] << (8 * (i % 4));
+
+	text[3] ^= Rk[5];
+	text[2] ^= Rk[4];
+	text[2] = ROR3(tmp4);
+
+	text[3] = tmp;
+}
+#endif
+#if 1
+void Enc_Round(word text[4], word Rk[6])
 {
 	word tmp = text[0];
 
-	text[0] = ROL((text[1] ^ Rk[1]) + (text[0] ^ Rk[0]),9);
+	text[0] = ROL((text[1] ^ Rk[1]) + (text[0] ^ Rk[0]), 9);
 	text[1] = ROR5((text[2] ^ Rk[3]) + (text[1] ^ Rk[2]));
 	text[2] = ROR3((text[3] ^ Rk[5]) + (text[2] ^ Rk[4]));
 	text[3] = tmp;
 }
+#endif
 
 void Enc_KeySchedule(byte Key[16], word Rk[][6])
 {
@@ -33,6 +122,7 @@ void Enc_KeySchedule(byte Key[16], word Rk[][6])
 		Rk[i][4] = tmp[3];
 		Rk[i][5] = tmp[1];
 	}
+	printf("%08x\n", Rk[23][0]);
 }
 
 void Encryption(byte Plain[16], byte Cipher[16], byte Key[16])
